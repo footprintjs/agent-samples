@@ -1,0 +1,41 @@
+{
+  "name": "agent-samples",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Runnable examples for the agentfootprint library",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "basics:llm-call": "npx tsx examples/basics/01-simple-llm-call.ts",
+    "basics:agent-tools": "npx tsx examples/basics/02-agent-with-tools.ts",
+    "basics:rag": "npx tsx examples/basics/03-rag-retrieval.ts",
+    "providers:prompt": "npx tsx examples/providers/04-prompt-strategies.ts",
+    "providers:messages": "npx tsx examples/providers/05-message-strategies.ts",
+    "providers:tools": "npx tsx examples/providers/06-tool-strategies.ts",
+    "orchestration:flowchart": "npx tsx examples/orchestration/07-flowchart-pipeline.ts",
+    "orchestration:swarm": "npx tsx examples/orchestration/08-swarm-delegation.ts",
+    "orchestration:resilience": "npx tsx examples/orchestration/09-resilience.ts",
+    "observability:recorders": "npx tsx examples/observability/10-recorders.ts",
+    "adapters:mcp": "npx tsx examples/adapters/11-mcp-tool-provider.ts",
+    "adapters:agent-loop": "npx tsx examples/adapters/12-agent-loop.ts",
+    "adapters:real-adapters": "npx tsx examples/adapters/14-real-adapters.ts",
+    "integration:full": "npx tsx examples/integration/13-full-integration.ts",
+    "integration:errors": "npx tsx examples/integration/15-error-handling.ts",
+    "integration:multimodal": "npx tsx examples/integration/16-multimodal.ts",
+    "orchestration:dynamic-subflow": "npx tsx examples/orchestration/18-dynamic-tool-subflow.ts",
+    "orchestration:lazy-subflow": "npx tsx examples/orchestration/19-lazy-subflow.ts",
+    "security:gated-tools": "npx tsx examples/security/20-permission-gated-tools.ts",
+    "resilience:fallback": "npx tsx examples/resilience/21-provider-fallback.ts",
+    "memory:persistent": "npx tsx examples/memory/22-persistent-memory.ts",
+    "all": "npm run basics:llm-call && npm run basics:agent-tools && npm run basics:rag && npm run orchestration:flowchart && npm run orchestration:swarm && npm run integration:full"
+  },
+  "dependencies": {
+    "agentfootprint": "file:../agentfootprint",
+    "footprintjs": "file:../footPrint"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "vitest": "^4.1.1"
+  }
+}
