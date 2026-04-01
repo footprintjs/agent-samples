@@ -19,7 +19,6 @@ export async function run(input: string) {
   return { content: result.content, tokenStats: tokens.getStats() };
 }
 
-// CLI entry point
 if (process.argv[1] === import.meta.filename) {
   run('Explain AI safety in one sentence.').then(console.log);
 }
