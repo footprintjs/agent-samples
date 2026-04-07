@@ -1,8 +1,8 @@
 /**
  * Sample 10: Recorders Overview
  *
- * agentObservability() — one call for tokens, tools, and cost tracking.
- * Wraps TokenRecorder + ToolUsageRecorder + CostRecorder into a single CompositeRecorder.
+ * agentObservability() — one call for tokens, tools, cost, and grounding.
+ * Wraps TokenRecorder + ToolUsageRecorder + CostRecorder + ExplainRecorder.
  */
 import { Agent, mock, defineTool } from 'agentfootprint';
 import { agentObservability } from 'agentfootprint/observe';
@@ -33,7 +33,7 @@ export async function run(input: string) {
     tokens: obs.tokens(),
     tools: obs.tools(),
     cost: obs.cost(),
-    costEntries: obs.costEntries(),
+    explain: obs.explain(),
   };
 }
 
