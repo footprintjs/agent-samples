@@ -10,16 +10,19 @@ describe('07 — FlowChart Pipeline', () => {
   it('runs classify → analyze → respond pipeline', async () => {
     const result = await runFlowChart('I was overcharged $50.');
     expect(result.content).toBe('Dear customer, we have processed your refund of $50.');
-    expect(result.tokenStats).toBeDefined();
-    expect(result.turnStats).toBeDefined();
+    expect(result.tokens).toBeDefined();
+    expect(result.tools).toBeDefined();
+    expect(result.cost).toBeDefined();
   });
 });
 
 describe('08 — Swarm Delegation', () => {
   it('orchestrator delegates to billing specialist', async () => {
     const result = await runSwarm('I need a refund.');
-    expect(result.content).toBe('The billing team has processed your refund.');
-    expect(result.tokenStats).toBeDefined();
+    expect(result.content).toBe('Routing to billing.');
+    expect(result.tokens).toBeDefined();
+    expect(result.tools).toBeDefined();
+    expect(result.cost).toBeDefined();
   });
 });
 

@@ -1,22 +1,23 @@
 /**
  * Sample 01: Simple LLM Call
  *
- * LLMCall builder + TokenRecorder — the simplest concept.
+ * LLMCall builder + agentObservability — the simplest concept.
  * Single LLM call, no tools, no loop.
  */
-import { LLMCall, mock, TokenRecorder } from 'agentfootprint';
+import { LLMCall, mock } from 'agentfootprint';
+import { agentObservability } from 'agentfootprint/observe';
 
 export async function run(input: string) {
-  const tokens = new TokenRecorder();
+  const obs = agentObservability();
 
   const runner = LLMCall
     .create({ provider: mock([{ content: 'This text discusses AI safety and alignment challenges.' }]) })
     .system('Summarize the following text concisely:')
-    .recorder(tokens)
+    .recorder(obs)
     .build();
 
   const result = await runner.run(input);
-  return { content: result.content, tokenStats: tokens.getStats() };
+  return { content: result.content, tokens: obs.tokens(), tools: obs.tools(), cost: obs.cost() };
 }
 
 if (process.argv[1] === import.meta.filename) {

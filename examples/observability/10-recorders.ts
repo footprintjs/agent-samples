@@ -1,31 +1,42 @@
 /**
- * Sample 10: Recorders
+ * Sample 10: Recorders Overview
  *
- * Token, Cost, Tool usage tracking — CompositeRecorder wraps multiple.
+ * agentObservability() — one call for tokens, tools, and cost tracking.
+ * Wraps TokenRecorder + ToolUsageRecorder + CostRecorder into a single CompositeRecorder.
  */
-import { LLMCall, mock, TokenRecorder, CostRecorder, ToolUsageRecorder, CompositeRecorder } from 'agentfootprint';
+import { Agent, mock, defineTool } from 'agentfootprint';
+import { agentObservability } from 'agentfootprint/observe';
+
+const lookupTool = defineTool({
+  id: 'lookup',
+  description: 'Look up a fact',
+  inputSchema: { type: 'object', properties: { topic: { type: 'string' } } },
+  handler: async ({ topic }: { topic: string }) => ({ content: `${topic}: 42` }),
+});
 
 export async function run(input: string) {
-  const tokens = new TokenRecorder();
-  const costs = new CostRecorder();
-  const tools = new ToolUsageRecorder();
+  const obs = agentObservability();
 
-  const _composite = new CompositeRecorder([tokens, costs, tools]);
-
-  const runner = LLMCall
-    .create({ provider: mock([{ content: 'Hello! How can I help?' }]) })
+  const runner = Agent
+    .create({ provider: mock([
+      { content: 'Let me look that up.', toolCalls: [{ id: '1', name: 'lookup', arguments: { topic: 'answer' } }] },
+      { content: 'The answer is 42.' },
+    ]) })
     .system('You are a helpful assistant.')
+    .tool(lookupTool)
+    .recorder(obs)
     .build();
 
   await runner.run(input);
 
   return {
-    tokenStats: tokens.getStats(),
-    costEntries: costs.getEntries(),
-    toolStats: tools.getStats(),
+    tokens: obs.tokens(),
+    tools: obs.tools(),
+    cost: obs.cost(),
+    costEntries: obs.costEntries(),
   };
 }
 
 if (process.argv[1] === import.meta.filename) {
-  run('Hello!').then(console.log);
+  run('What is the answer?').then(console.log);
 }

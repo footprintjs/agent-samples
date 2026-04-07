@@ -1,10 +1,11 @@
 /**
  * Sample 02: Agent with Tools
  *
- * Agent builder + tools + recorders — full ReAct loop.
+ * Agent builder + tools + agentObservability — full ReAct loop.
  * The LLM calls a tool, gets results, then produces a final answer.
  */
-import { Agent, mock, defineTool, TokenRecorder, ToolUsageRecorder } from 'agentfootprint';
+import { Agent, mock, defineTool } from 'agentfootprint';
+import { agentObservability } from 'agentfootprint/observe';
 
 const searchTool = defineTool({
   id: 'search',
@@ -14,8 +15,7 @@ const searchTool = defineTool({
 });
 
 export async function run(input: string) {
-  const tokens = new TokenRecorder();
-  const toolUsage = new ToolUsageRecorder();
+  const obs = agentObservability();
 
   const runner = Agent
     .create({ provider: mock([
@@ -24,12 +24,11 @@ export async function run(input: string) {
     ]) })
     .system('You are a research assistant. Use the search tool to find information.')
     .tool(searchTool)
-    .recorder(tokens)
-    .recorder(toolUsage)
+    .recorder(obs)
     .build();
 
   const result = await runner.run(input);
-  return { content: result.content, tokenStats: tokens.getStats(), toolStats: toolUsage.getStats() };
+  return { content: result.content, tokens: obs.tokens(), tools: obs.tools(), cost: obs.cost() };
 }
 
 if (process.argv[1] === import.meta.filename) {

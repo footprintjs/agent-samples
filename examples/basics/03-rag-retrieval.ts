@@ -1,13 +1,14 @@
 /**
  * Sample 03: RAG Retrieval
  *
- * RAG builder + retriever + recorder — retrieve-augment-generate pattern.
+ * RAG builder + retriever + agentObservability — retrieve-augment-generate pattern.
  * Retrieves relevant chunks, augments the prompt, then generates.
  */
-import { RAG, mock, mockRetriever, TokenRecorder } from 'agentfootprint';
+import { RAG, mock, mockRetriever } from 'agentfootprint';
+import { agentObservability } from 'agentfootprint/observe';
 
 export async function run(input: string) {
-  const tokens = new TokenRecorder();
+  const obs = agentObservability();
 
   const runner = RAG
     .create({
@@ -21,11 +22,11 @@ export async function run(input: string) {
     })
     .system('Answer the question using only the provided context.')
     .topK(3)
-    .recorder(tokens)
+    .recorder(obs)
     .build();
 
   const result = await runner.run(input);
-  return { content: result.content, tokenStats: tokens.getStats() };
+  return { content: result.content, tokens: obs.tokens(), tools: obs.tools(), cost: obs.cost() };
 }
 
 if (process.argv[1] === import.meta.filename) {

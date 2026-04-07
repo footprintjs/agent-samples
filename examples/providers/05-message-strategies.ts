@@ -1,9 +1,11 @@
 /**
  * Sample 05: Message Strategies
  *
- * Sliding window, truncation — manage conversation context size.
+ * slidingWindow, charBudget — manage conversation context size.
+ * These are MessageStrategy objects that plug into agentLoop / builder.
  */
-import { slidingWindow, truncateToCharBudget, userMessage, assistantMessage } from 'agentfootprint';
+import { userMessage, assistantMessage } from 'agentfootprint';
+import { slidingWindow, charBudget } from 'agentfootprint/providers';
 
 export async function run(_input: string) {
   const messages = [
@@ -16,13 +18,16 @@ export async function run(_input: string) {
     userMessage('Fourth question'),
   ];
 
-  const windowed = slidingWindow(messages, 4);
-  const truncated = truncateToCharBudget(messages, 100);
+  const windowStrategy = slidingWindow({ maxMessages: 4 });
+  const budgetStrategy = charBudget({ maxChars: 100 });
+
+  const windowed = windowStrategy.prepare(messages);
+  const truncated = budgetStrategy.prepare(messages);
 
   return {
     original: messages.length + ' messages',
-    windowed: windowed.length + ' messages (last 4)',
-    truncated: truncated.length + ' messages (100 char budget)',
+    windowed: windowed.value.length + ' messages (' + windowed.rationale + ')',
+    truncated: truncated.value.length + ' messages (' + truncated.rationale + ')',
   };
 }
 

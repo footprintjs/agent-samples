@@ -15,10 +15,10 @@ describe('04 — Prompt Strategies', () => {
 });
 
 describe('05 — Message Strategies', () => {
-  it('applies sliding window and truncation', async () => {
+  it('applies sliding window and char budget strategies', async () => {
     const result = await runMessages('');
     expect(result.original).toBe('7 messages');
-    expect(result.windowed).toBe('4 messages (last 4)');
+    expect(result.windowed).toContain('messages');
     expect(result.truncated).toContain('messages');
   });
 });

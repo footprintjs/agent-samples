@@ -3,7 +3,7 @@
  *
  * withRetry, withFallback — wrap any RunnerLike with retry/fallback.
  */
-import { withRetry } from 'agentfootprint';
+import { withRetry } from 'agentfootprint/resilience';
 
 export async function run(input: string) {
   let attempt = 0;

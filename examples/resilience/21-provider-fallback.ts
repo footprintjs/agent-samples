@@ -4,7 +4,8 @@
  * Multi-provider failover chain — automatic fallback across LLM providers.
  * fallbackProvider() tries providers in order, falls back on failure.
  */
-import { Agent, fallbackProvider } from 'agentfootprint';
+import { Agent } from 'agentfootprint';
+import { fallbackProvider } from 'agentfootprint/resilience';
 
 export async function run(input: string) {
   const fallbacks: string[] = [];

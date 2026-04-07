@@ -2,13 +2,13 @@
  * Sample 08: Swarm Delegation
  *
  * LLM-routed multi-agent handoff — orchestrator delegates to specialists.
- * Token and tool recorders track delegation.
+ * agentObservability() tracks tokens, tools, and cost across delegation.
  */
-import { Swarm, LLMCall, mock, TokenRecorder, ToolUsageRecorder } from 'agentfootprint';
+import { Swarm, LLMCall, mock } from 'agentfootprint';
+import { agentObservability } from 'agentfootprint/observe';
 
 export async function run(input: string) {
-  const tokens = new TokenRecorder();
-  const toolUsage = new ToolUsageRecorder();
+  const obs = agentObservability();
 
   const billing = LLMCall
     .create({ provider: mock([{ content: 'Your refund of $50 has been processed. It will appear in 3-5 business days.' }]) })
@@ -31,12 +31,11 @@ export async function run(input: string) {
     .system('Route customer requests to the appropriate specialist.')
     .specialist('billing', 'Handles billing and payment issues', billing)
     .specialist('technical', 'Handles technical support', technical)
-    .recorder(tokens)
-    .recorder(toolUsage)
+    .recorder(obs)
     .build();
 
   const result = await runner.run(input);
-  return { content: result.content, tokenStats: tokens.getStats(), toolStats: toolUsage.getStats() };
+  return { content: result.content, tokens: obs.tokens(), tools: obs.tools(), cost: obs.cost() };
 }
 
 if (process.argv[1] === import.meta.filename) {

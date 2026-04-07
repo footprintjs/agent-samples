@@ -3,7 +3,8 @@
  *
  * LLMError, classification, wrapSDKError — structured error management.
  */
-import { LLMError, wrapSDKError, classifyStatusCode } from 'agentfootprint';
+import { LLMError } from 'agentfootprint';
+import { classifyStatusCode, wrapSDKError } from 'agentfootprint/resilience';
 
 export async function run(_input: string) {
   const classifications = {

@@ -2,13 +2,13 @@
  * Sample 07: FlowChart Pipeline
  *
  * Sequential multi-agent composition — classify → analyze → respond.
- * Token and turn recorders observe the whole pipeline.
+ * agentObservability() tracks tokens, tools, and cost across the whole pipeline.
  */
-import { FlowChart, LLMCall, mock, TokenRecorder, TurnRecorder } from 'agentfootprint';
+import { FlowChart, LLMCall, mock } from 'agentfootprint';
+import { agentObservability } from 'agentfootprint/observe';
 
 export async function run(input: string) {
-  const tokens = new TokenRecorder();
-  const turns = new TurnRecorder();
+  const obs = agentObservability();
 
   const classify = LLMCall
     .create({ provider: mock([{ content: 'Category: billing' }]) })
@@ -29,12 +29,11 @@ export async function run(input: string) {
     .agent('classify', 'Classify Request', classify)
     .agent('analyze', 'Analyze Request', analyze)
     .agent('respond', 'Generate Response', respond)
-    .recorder(tokens)
-    .recorder(turns)
+    .recorder(obs)
     .build();
 
   const result = await runner.run(input);
-  return { content: result.content, tokenStats: tokens.getStats(), turnStats: turns.getTurns() };
+  return { content: result.content, tokens: obs.tokens(), tools: obs.tools(), cost: obs.cost() };
 }
 
 if (process.argv[1] === import.meta.filename) {
